@@ -1,6 +1,6 @@
 # 🧪 Research Paper Fetcher CLI
 
-A powerful command-line tool to **search**, **summarize**, and **save** research papers from **PubMed** using its full query syntax. Optionally powered by **local LLMs like Ollama** for summarization.
+A powerful command-line tool to **search**, **summarize**, and **save** research papers from **PubMed** using its full query syntax. Powered by **local LLMs like Ollama** for summarization.
 
 ---
 
