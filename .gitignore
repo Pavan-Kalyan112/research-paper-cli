@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+.poetry/
+*.egg-info/
+*.lock
+.idea/
+.vscode/
