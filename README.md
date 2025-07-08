@@ -1,6 +1,7 @@
 # 🧪 Research Paper Fetcher CLI
 
 A powerful command-line tool to **search**, **summarize**, and **save** research papers from **PubMed** using its full query syntax. Powered by **local LLMs like Ollama** for summarization.
+A command-line tool to search, fetch, and export research papers from PubMed, with optional LLM summarization using Ollama.
 
 ---
 
@@ -19,6 +20,24 @@ A powerful command-line tool to **search**, **summarize**, and **save** research
 
 This tool can optionally summarize abstracts using **Ollama** running locally (e.g., `llama3`). You can toggle this using:
 
+## ⚙️ Installation & Setup
+
+### 1 Clone the repository
+
+git clone https://github.com/Pavan-Kalyan112/Research-Paper-Fetcher-CLI.git
+cd Research-Paper-Fetcher-CLI
+
+### 2 Install dependencies using Poetry
+```bash
+poetry install
+```
+
+## 🚀 Usage
+
+### Run the tool from the CLI using Poetry:
+
+Search for papers on a given topic:
+
 ## 📌 CLI Usage Commands
 
 ### ➤ Search PubMed papers:
@@ -27,11 +46,15 @@ poetry run pubmed-cli "covid vaccine"
 
 ```
 --llm
-## ➤ Enable LLM summarization (requires Ollama):
+## ➤ 🤖Enable LLM summarization (requires Ollama):
 
 ```bash
 poetry run pubmed-cli "covid vaccine" --llm
 ```
+
+##  💾 Export Results
+
+Export search results in various formats:
 
 ## ➤ Save output to CSV:
 ```bash
@@ -56,3 +79,40 @@ poetry run pubmed-cli "covid vaccine" --download --file raw_data
 ```bash
 poetry run pubmed-cli "covid vaccine" --llm --debug
 ```
+
+## 🐞 Enable Debug Logs
+
+Run with debug logs enabled (useful for troubleshooting):
+```bash
+poetry run pubmed-cli "covid vaccine" --debug --limit 1
+```
+
+## 🧪 Testing
+
+Run all unit tests using:
+```bash
+poetry run pytest
+```
+
+| Tool                                                          | Description               |      |
+| ------------------------------------------------------------- | ------------------------- | ---- |
+| 🧬 [Entrez API](https://www.ncbi.nlm.nih.gov/books/NBK25501/) | Fetch papers from PubMed  |      |
+| 📦 [Poetry](https://python-poetry.org/)                       | Dependency management     |      |
+| 🤗 [Ollama](https://ollama.com/)                              | Local LLM serving backend |      |
+| 📄 [FPDF](https://pyfpdf.github.io/fpdf2/)                    | PDF generation            |      |
+| 🌈 [Rich](https://rich.readthedocs.io/en/stable/)             | Stylish CLI output        |      |
+| 🧪 [Pytest](https://docs.pytest.org/en/7.1.x/)                | Unit testing              |      |
+
+
+## 📋 Sample Output Columns (CSV)
+PubmedID: Unique identifier
+
+Title: Paper title
+
+Publication Date
+
+Non-academic Authors
+
+Company Affiliations
+
+Corresponding Author Email
