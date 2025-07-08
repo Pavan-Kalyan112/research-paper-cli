@@ -1,5 +1,5 @@
 [project]
-name = "pubmed-fetcher"
+name = "pubmed-fetcher-cli-pavan"
 version = "0.1.0"
 description = "CLI tool to fetch and filter PubMed research papers"
 authors = [{ name = "Pavan Kalyan", email = "pavanneelam96@gmail.com" }]
