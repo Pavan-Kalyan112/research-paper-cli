@@ -1,0 +1,2 @@
+[console_scripts]
+pubmed-cli = pubmed_fetcher.cli:main

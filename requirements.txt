@@ -1,0 +1,8 @@
+# Core dependencies
+requests         # For PubMed API
+rich             # For beautiful terminal output
+fpdf             # For saving PDF files
+openai           # Optional: If you want to use OpenAI for LLM summarization
+
+# Testing (optional)
+pytest           # For running unit tests

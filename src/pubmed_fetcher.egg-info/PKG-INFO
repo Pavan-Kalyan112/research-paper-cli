@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: pubmed-fetcher
+Version: 0.1.0
+Summary: CLI tool to fetch and summarize PubMed research papers
+Author-email: Pavan Kalyan <you@example.com>
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: requests
+Requires-Dist: rich
+Requires-Dist: fpdf

@@ -1,0 +1,27 @@
+[project]
+name = "pubmed-fetcher"
+version = "0.1.0"
+description = "CLI tool to fetch and filter PubMed research papers"
+authors = [{ name = "Pavan Kalyan", email = "you@example.com" }]
+requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "MIT" }
+
+dependencies = [
+    "requests",
+    "rich",
+    "python-dotenv",
+]
+
+[project.scripts]
+get-papers-list = "pubmed_fetcher.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+
+[tool.pytest.ini_options]
+pythonpath = "src"
