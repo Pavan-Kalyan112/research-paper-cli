@@ -1,5 +1,3 @@
-# src/pubmed_fetcher/fetcher.py
-
 import requests
 from typing import List, Dict
 
@@ -52,21 +50,28 @@ def fetch_pubmed_details(ids: List[str]) -> List[Dict]:
 
     response = requests.get(url, params=params)
     response.raise_for_status()
-    result = response.json().get("result", {})
+    data = response.json().get("result", {})
 
     summaries = []
     for uid in ids:
-        item = result.get(uid)
+        item = data.get(uid)
         if not item:
             continue
+
+        authors_list = item.get("authors", [])
+        authors = [author.get("name", "Unknown") for author in authors_list]
 
         summaries.append({
             "pubmed_id": uid,
             "title": item.get("title", "No Title"),
             "publication_date": item.get("pubdate", "Unknown"),
-            "authors": [author.get("name", "Unknown") for author in item.get("authors", [])],
+            "authors": ", ".join(authors) if authors else "Unknown",
             "source": item.get("source", "Unknown"),
             "doi": item.get("elocationid", "N/A"),
+            # Additional fields for CSV compatibility
+            "non_academic_authors": "N/A",          # Placeholder, can be filled by `filters`
+            "company_affiliations": "N/A",          # Placeholder
+            "corresponding_email": "N/A"            # Placeholder
         })
 
     return summaries

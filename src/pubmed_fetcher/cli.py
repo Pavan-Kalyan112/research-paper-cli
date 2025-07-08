@@ -11,7 +11,7 @@ from pubmed_fetcher.utils import save_as_csv, save_as_pdf, save_as_markdown
 console = Console()
 
 def main():
-    parser = argparse.ArgumentParser(description="📚 PubMed Research Paper Fetcher with LLM Summarizer")
+    parser = argparse.ArgumentParser(description="PubMed Research Paper Fetcher with LLM Summarizer")
     parser.add_argument("query", type=str, help="Search query for PubMed")
     parser.add_argument("-l", "--limit", type=int, default=3, help="Number of articles to fetch")
     parser.add_argument("-f", "--file", type=str, help="Filename to save results (optional)")
@@ -22,7 +22,7 @@ def main():
 
     args = parser.parse_args()
 
-    # 🔍 Fetch papers
+    # Logging search
     if args.debug:
         console.log(f"Searching for: {args.query}, Limit: {args.limit}")
     results = search_and_fetch(args.query, args.limit)
@@ -31,7 +31,7 @@ def main():
         console.print("[red]No results found for your query.[/red]")
         return
 
-    # 💾 Save raw JSON if download mode is on
+    # Save raw data if requested
     if args.download:
         json_file = (args.file or "raw_pubmed_data") + ".json"
         with open(json_file, "w", encoding="utf-8") as f:
@@ -39,7 +39,7 @@ def main():
         console.print(f"Raw data saved to [green]{json_file}[/green]")
         return
 
-    # 🤖 Summarize abstracts using LLM if requested
+    # Summarize using LLM
     if args.llm:
         for paper in results:
             summary = summarize_abstract(paper.get("abstract", ""))
@@ -47,7 +47,7 @@ def main():
             if args.debug:
                 console.log(f"LLM summary: {summary[:120]}...")
 
-    # 💾 Save results to file
+    # Save to file
     if args.file and args.format:
         filename = args.file
         if args.format == "csv":
@@ -59,15 +59,14 @@ def main():
         console.print(f"Results saved to: [blue]{filename}[/blue]")
         return
 
-    # 🖥️ Print to console (default)
+    # Show in console
     for i, paper in enumerate(results, 1):
-        console.rule(f"[bold blue]📄 Paper {i}")
+        console.rule(f"Paper {i}")
         console.print(f"[bold]Title:[/bold] {paper.get('title', 'No title')}")
         console.print(f"[italic]Authors:[/italic] {paper.get('authors', 'Unknown')}")
         console.print(f"[dim]Abstract:[/dim] {paper.get('abstract', 'No abstract')[:500]}...\n")
         if "summary" in paper:
             console.print(f"[magenta]Summary:[/magenta] {paper['summary']}\n")
-
 
 if __name__ == "__main__":
     main()

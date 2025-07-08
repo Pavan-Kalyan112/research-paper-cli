@@ -1,35 +1,31 @@
-# src/pubmed_fetcher/summarizer.py
-
-import os
 import requests
-from dotenv import load_dotenv
-
-load_dotenv()
-
-USE_LLM = os.getenv("USE_LLM", "false").lower() == "true"
-LLM_MODEL = os.getenv("LLM_MODEL_NAME", "llama3")
-LLM_URL = os.getenv("LLM_API_URL", "http://localhost:11434/api/generate")
 
 def summarize_abstract(text: str) -> str:
     """
-    Summarizes the given abstract using Ollama, or fallback to a shorter version if unavailable.
-    """
-    if not USE_LLM:
-        return _fallback_summary(text)
+    Summarize the given research abstract using a local LLM API (Ollama).
 
-    payload = {
-        "model": LLM_MODEL,
-        "prompt": f"Summarize this abstract in simple language:\n{text}",
-        "stream": False
-    }
+    Args:
+        text (str): The abstract text to summarize.
+
+    Returns:
+        str: A simplified summary or error message.
+    """
+    # Handle empty or None input gracefully
+    if not text or not text.strip():
+        return "No abstract provided for summarization."
 
     try:
-        response = requests.post(LLM_URL, json=payload, timeout=60)
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "llama3",
+                "prompt": f"Summarize this research paper abstract in simple terms:\n\n{text}",
+                "stream": False
+            },
+            timeout=30
+        )
         response.raise_for_status()
-        result = response.json()
-        return result.get("response", "⚠️ No summary returned.")
-    except requests.exceptions.RequestException as e:
-        return f"⚠️ LLM summarization failed: {e}"
-
-def _fallback_summary(text: str) -> str:
-    return text[:300] + "..." if len(text) > 300 else text
+        data = response.json()
+        return data.get("response", "LLM returned no summary.")
+    except Exception as e:
+        return f"⚠️ LLM summarization failed: {str(e)}"

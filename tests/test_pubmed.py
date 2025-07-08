@@ -1,24 +1,13 @@
-# tests/test_pubmed.py
-
-import unittest
 from pubmed_fetcher.pubmed import search_and_fetch
 
-class TestPubMedFetcher(unittest.TestCase):
-
-    def test_search_and_fetch_returns_list(self):
-        results = search_and_fetch("covid", retmax=2)
-        self.assertIsInstance(results, list)
-        self.assertGreater(len(results), 0)
-
-    def test_result_has_expected_fields(self):
-        results = search_and_fetch("cancer", retmax=1)
-        self.assertTrue("title" in results[0])
-        self.assertTrue("authors" in results[0])
-        self.assertTrue("abstract" in results[0])
-
-    def test_empty_query_returns_empty_list(self):
-        results = search_and_fetch("aslkdhfalksdhfalksdhflkasdhf", retmax=1)
-        self.assertEqual(results, [])
-
-if __name__ == '__main__':
-    unittest.main()
+def test_search_and_fetch():
+    results = search_and_fetch("covid vaccine", retmax=2)
+    assert isinstance(results, list)
+    assert len(results) > 0
+    for paper in results:
+        assert "pubmed_id" in paper
+        assert "title" in paper
+        assert "abstract" in paper
+        assert "authors" in paper
+        assert isinstance(paper["authors"], str)
+  

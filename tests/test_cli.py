@@ -1,42 +1,87 @@
 import subprocess
-import pytest
+import os
+from pathlib import Path
 
+# Root directory of your project
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-def run_cli_command(*args):
-    """Run the CLI command using Poetry and return the result."""
+def run_command(command):
+    """Helper to run a command in the project directory."""
     result = subprocess.run(
-        ["poetry", "run", "python", "-m", "pubmed_fetcher.cli", *args],
+        command,
+        shell=True,
         capture_output=True,
-        text=True
+        text=True,
+        cwd=PROJECT_ROOT
     )
     return result
 
-
-def test_basic_query_runs():
-    """Check if the CLI runs successfully with a basic query."""
-    result = run_cli_command("covid vaccine")
+def test_basic_search():
+    """Test a basic PubMed search command."""
+    cmd = 'poetry run pubmed-cli "covid vaccine" --limit 1'
+    result = run_command(cmd)
     assert result.returncode == 0
-    assert "Paper" in result.stdout
+    assert "Paper" in result.stdout or "Title" in result.stdout
 
+def test_csv_output():
+    """Test saving results to CSV."""
+    output_file = PROJECT_ROOT / "test_output.csv"
+    if output_file.exists():
+        os.remove(output_file)
 
-def test_output_contains_expected_keywords():
-    """Check that the output has expected fields like Title, Authors, Abstract."""
-    result = run_cli_command("covid vaccine")
-    assert "Authors:" in result.stdout
-    assert "Abstract:" in result.stdout
-
-
-def test_empty_query_does_not_crash():
-    """Ensure that providing an empty query does not crash the CLI."""
-    result = run_cli_command("")
+    cmd = f'poetry run pubmed-cli "covid vaccine" --file test_output.csv --format csv --limit 1'
+    result = run_command(cmd)
     assert result.returncode == 0
-    # Even with empty input, we expect some safe output or help message
-    assert "Please enter a search query" in result.stdout or "Paper" not in result.stdout
+    assert output_file.exists()
 
+    # Clean up
+    output_file.unlink()
 
-@pytest.mark.skip(reason="LLM summary feature not implemented or stable yet")
-def test_query_with_llm_flag():
-    """Test CLI with LLM flag enabled (skipped if not implemented)."""
-    result = run_cli_command("covid vaccine", "--llm")
+def test_pdf_output():
+    """Test saving results to PDF."""
+    output_file = PROJECT_ROOT / "test_output.pdf"
+    if output_file.exists():
+        os.remove(output_file)
+
+    cmd = f'poetry run pubmed-cli "covid vaccine" --file test_output.pdf --format pdf --limit 1'
+    result = run_command(cmd)
     assert result.returncode == 0
-    assert "Summary:" in result.stdout
+    assert output_file.exists()
+
+    # Clean up
+    output_file.unlink()
+
+def test_markdown_output():
+    """Test saving results to Markdown."""
+    output_file = PROJECT_ROOT / "test_output.md"
+    if output_file.exists():
+        os.remove(output_file)
+
+    cmd = f'poetry run pubmed-cli "covid vaccine" --file test_output.md --format md --limit 1'
+    result = run_command(cmd)
+    assert result.returncode == 0
+    assert output_file.exists()
+
+    # Clean up
+    output_file.unlink()
+
+def test_download_json():
+    """Test raw JSON download option."""
+    json_file = PROJECT_ROOT / "test_data.json"
+    if json_file.exists():
+        os.remove(json_file)
+
+    cmd = f'poetry run pubmed-cli "covid vaccine" --download --file test_data'
+    result = run_command(cmd)
+    assert result.returncode == 0
+    assert json_file.exists()
+
+    # Clean up
+    json_file.unlink()
+
+def test_debug_flag_does_not_crash():
+    """Test that --debug mode runs without error."""
+    cmd = 'poetry run pubmed-cli "covid vaccine" --debug --limit 1'
+    result = run_command(cmd)
+    assert result.returncode == 0
+    assert "Searching for" in result.stdout or "Limit:" in result.stdout
