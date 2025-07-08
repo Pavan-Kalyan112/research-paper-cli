@@ -116,3 +116,99 @@ Non-academic Authors
 Company Affiliations
 
 Corresponding Author Email
+
+# PubMed Fetcher CLI project locally, from install to execution
+
+### STEP 1: Clone or Move into Your Project Directory
+```bash
+cd "C:\Users\pavan\OneDrive\Desktop\Research-Paper-Fetcher-CLI"
+```
+### STEP 2: (Optional) Create & Activate Virtual Environment
+```bash
+python -m venv venv
+.\venv\Scripts\activate
+```
+### STEP 3: Install Required Packages
+
+### # If you're using poetry:
+
+```bash
+poetry install
+
+```
+
+#### Or if you're using requirements.txt (manual setup):
+
+```bash
+
+pip install -r requirements.txt
+```
+
+#### If not available, install these manually:
+
+```bash
+
+pip install requests rich python-dotenv
+```
+
+#### And for development:
+
+```bash
+
+pip install pytest build twine
+```
+## STEP 4: Run Unit Tests (Optional)
+#### Make sure everything works:
+```bash
+poetry run pytest
+# or just
+pytest
+```
+
+# STEP 5: Build the Package (Only for PyPI or TestPyPI Upload)
+```bash
+python -m build
+
+It creates .whl and .tar.gz files in the dist/ directory.
+```
+# STEP 6: Upload to Test PyPI (If needed)
+```bash
+python -m twine upload --repository testpypi dist/*
+```
+# STEP 7: Install the Package (from local or TestPyPI)
+```bash
+If installing locally:
+
+
+pip install dist/pubmed_fetcher_cli_pavan-0.1.0-py3-none-any.whl
+Or from Test PyPI (replace <token> if needed):
+
+```
+```bash
+pip install --index-url https://test.pypi.org/simple/ pubmed-fetcher-cli-pavan
+```
+ # STEP 8: Run the CLI Tool
+Once installed, you can use:
+```bash
+
+pubmed-cli "covid vaccine" --limit 2 --llm
+```
+If it says 'pubmed-cli' is not recognized, then try:
+
+```bash
+python -m pubmed_fetcher.cli "covid vaccine" --limit 2 --llm
+```
+
+### 🔧 Optional Flags
+
+| Flag             | Description                                      | Example Usage                                      |
+|------------------|--------------------------------------------------|----------------------------------------------------|
+| `--llm`          | Use LLM to summarize abstracts                   | `pubmed-cli "covid vaccine" --llm`                 |
+| `--format`       | Output format: `csv`, `pdf`, or `md`             | `--format pdf`                                     |
+| `--file`         | Output filename (used with `--format`)           | `--file output.pdf`                                |
+| `--download`     | Download and save raw JSON data only             | `--download --file raw_data`                       |
+| `--debug`        | Enable debug logging and show internal logs      | `--debug`                                          |
+
+> Combine flags as needed.  
+> Example:  
+> `pubmed-cli "covid vaccine" --limit 5 --llm --format csv --file result.csv --debug`
