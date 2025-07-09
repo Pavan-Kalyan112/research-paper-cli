@@ -1,8 +1,9 @@
 # Core dependencies
-requests         # For PubMed API
-rich             # For beautiful terminal output
-fpdf             # For saving PDF files
-openai           # Optional: If you want to use OpenAI for LLM summarization
+requests               # For PubMed API
+rich                   # For beautiful terminal output
+fpdf                   # For saving PDF files
+sentence-transformers  # For generating text embeddings
+faiss-cpu              # For building and searching vector indexes (CPU version)
 
 # Testing (optional)
-pytest           # For running unit tests
+pytest                 # For running unit tests

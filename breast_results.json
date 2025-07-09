@@ -1,0 +1,52 @@
+[
+  {
+    "PubmedID": "40629450",
+    "Title": "Local recurrence of phyllodes tumors after surgery with wide compared to narrow margins: study protocol for a systematic review and meta-analysis.",
+    "Publication Date": "2025",
+    "Authors": "Carl Sars, Jan Frisell, Paul W Dickman, Helena Sackey, Ebba K Lindqvist",
+    "Abstract": "Phyllodes tumors are rare fibroepithelial breast lesions graded as benign, borderline, or malignant. Surgical resection with clear margins is the primary method of treatment. Consensus on margin width could prevent unnecessary large primary resections or reoperations, yet the optimal margins for different tumor grades remain unclear. This systematic review and meta-analysis will evaluate the effect of wide versus narrow margins on local recurrence rates after surgery for phyllodes tumors of the breast. In addition, the re-excision rates, adjuvant treatment and adverse events will be assessed.",
+    "Non-academicAuthor(s)": "Helena Sackey; Carl Sars; Paul W Dickman; Jan Frisell",
+    "CompanyAffiliation(s)": "",
+    "Corresponding Author Email": "carl.sars@ki.se."
+  },
+  {
+    "PubmedID": "40629431",
+    "Title": "Mutational landscape of pure ductal carcinoma in situ and associations with disease prognosis and response to radiotherapy.",
+    "Publication Date": "2025",
+    "Authors": "Noor Rizvi, Eliseos J Mucaki, Emily L Salmini, Monica Zhang, Sabina Trebinjac, Ezra Hahn, Lawrence Paszat, Sharon Nofech-Mozes, Michael T Hallett, Eileen Rakovitch, Vanessa Dumeaux",
+    "Abstract": "Managing Ductal Carcinoma in Situ (DCIS) remains challenging due to the lack of reliable biomarkers to predict radiotherapy (RT) response, leading to both overtreatment of indolent disease and undertreatment of aggressive cases.",
+    "Non-academicAuthor(s)": "",
+    "CompanyAffiliation(s)": "",
+    "Corresponding Author Email": "vdumeaux@uwo.ca."
+  },
+  {
+    "PubmedID": "40629424",
+    "Title": "ERCC1/NGFR affects prognosis in basal-like breast cancer.",
+    "Publication Date": "2025",
+    "Authors": "Yuxi Lei, Xiabin Li, Fan Fan, Ruiwen Feng, Junfang He, Jing Zhong, Fancai Zeng, Yan Tang",
+    "Abstract": "To study the effects of ERCC1 and NGFR on metastasis and prognosis of basal-like breast cancer, and construct a prognostic prediction model, initially to explore whether ERCC1 plays a role in BLBC metastasis through NGFR.",
+    "Non-academicAuthor(s)": "Yuxi Lei; Xiabin Li",
+    "CompanyAffiliation(s)": "",
+    "Corresponding Author Email": "zfcai@swmu.edu.cn.; tangyan200310@163.com."
+  },
+  {
+    "PubmedID": "40629423",
+    "Title": "MRDDA: a multi-relational graph neural network for drug-disease association prediction.",
+    "Publication Date": "2025",
+    "Authors": "Congzhou Chen, Yaozheng Zhou, Yinghong Li, Jin Xu, Demin Li, Lingfeng Wang",
+    "Abstract": "Drug repositioning offers a promising avenue for accelerating drug development and reducing costs. Recently, computational repositioning approaches have gained attraction for identifying potential drug-disease associations (DDAs). Biological entities such as drugs, genes, proteins, RNA, and diseases interact within a complex network. How to adequately extract the intrinsic relationships among them and accurately predict the drug-disease associations remains a challenge.",
+    "Non-academicAuthor(s)": "",
+    "CompanyAffiliation(s)": "",
+    "Corresponding Author Email": "deminli2008@sina.com.; lfwang@mail.buct.edu.cn."
+  },
+  {
+    "PubmedID": "40629357",
+    "Title": "The prognostic differences between breast-conserving surgery and mastectomy in patients with invasive ductal carcinoma who achieved complete response following neoadjuvant chemotherapy: a propensity score matched analysis based on the SEER database.",
+    "Publication Date": "2025",
+    "Authors": "Cheng Xiao, Yuanxin Zhang, Junyan Li",
+    "Abstract": "The study investigates the prognostic differences between breast-conserving surgery (BCS) and mastectomy in patients with invasive ductal carcinoma of the breast who achieve a complete response (CR) after neoadjuvant chemotherapy.",
+    "Non-academicAuthor(s)": "",
+    "CompanyAffiliation(s)": "",
+    "Corresponding Author Email": "drli_jy@163.com."
+  }
+]

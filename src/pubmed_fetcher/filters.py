@@ -1,67 +1,87 @@
 import re
-from typing import List, Tuple
+import string
+from typing import List, Tuple, Set
 
-# Keywords to identify non-academic institutions
-NON_ACADEMIC_KEYWORDS = [
-    "hospital", "clinic", "health center", "medical center", "institute of health",
-    "research institute", "gov", "ministry", "department of health", "nhs", "cdc",
-    "independent", "researcher"
-]
-
-
-# Keywords to identify company affiliations (common pharma/biotech/corporate indicators)
+# Add more relevant pharmaceutical/biotech keywords as needed
 COMPANY_KEYWORDS = [
-    "pharma", "biotech", "inc", "ltd", "llc", "gmbh", "corp", "co.", "company",
-    "novartis", "pfizer", "astrazeneca", "moderna", "gsk", "sanofi", "abbvie",
-    "johnson", "merck", "bayer", "roche", "takeda", "amgen"
+    "Pfizer", "Moderna", "AstraZeneca", "Johnson", "Novartis", "GSK",
+    "Merck", "Sanofi", "Roche", "Bayer", "Amgen", "Biogen", "AbbVie",
+    "Eli Lilly", "Takeda", "Genentech", "Bristol-Myers", "Regeneron", "Vertex"
 ]
 
-# Regex pattern for email extraction
-EMAIL_REGEX = r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+"
+# Common academic institution keywords
+ACADEMIC_KEYWORDS = [
+    "university", "institute", "college", "school of medicine",
+    "hospital", "center", "centre", "faculty"
+]
 
 
-def extract_emails(affiliations: List[str]) -> List[str]:
+def extract_emails(text: str) -> Set[str]:
     """
-    Extract all email addresses from a list of affiliation strings.
+    Extract email addresses from a string using regex.
 
     Args:
-        affiliations (List[str]): List of affiliations.
+        text (str): Input text possibly containing emails.
 
     Returns:
-        List[str]: List of unique email addresses.
+        Set[str]: Set of extracted email addresses.
     """
-    emails = []
-    for aff in affiliations:
-        found = re.findall(EMAIL_REGEX, aff)
-        emails.extend(found)
-    return list(set(emails))
+    return set(re.findall(r"[\w\.-]+@[\w\.-]+\.\w+", text))
 
 
-def classify_authors(affiliations: List[str]) -> Tuple[List[str], List[str], List[str]]:
+def extract_person_name(affiliation: str) -> str:
     """
-    Classify affiliations into non-academic, company-affiliated, and extract emails.
+    Heuristic to extract a potential name from an affiliation string.
 
     Args:
-        affiliations (List[str]): Raw affiliation strings.
+        affiliation (str): Raw affiliation text.
 
     Returns:
-        Tuple[List[str], List[str], List[str]]:
-            - non_academic: List of non-academic affiliations
-            - companies: List of company affiliations
-            - emails: List of unique email addresses
+        str: Extracted name or raw snippet.
     """
-    non_academic = []
-    companies = []
+    tokens = affiliation.strip().split()
+    # Remove punctuation from each token to avoid trailing commas, periods, etc.
+    name_tokens = [token.strip(string.punctuation) for token in tokens if token.istitle()]
+
+    if len(name_tokens) >= 2:
+        return f"{name_tokens[0]} {name_tokens[1]}"
+    elif name_tokens:
+        return name_tokens[0]
+    else:
+        return "Unknown"
+
+
+def classify_authors(affiliations: List[str]) -> Tuple[Set[str], Set[str], Set[str]]:
+    """
+    Classifies affiliations into:
+    - Non-academic author names
+    - Company affiliations based on keyword match
+    - Emails extracted from affiliation text
+
+    Args:
+        affiliations (List[str]): A list of affiliation strings.
+
+    Returns:
+        Tuple[Set[str], Set[str], Set[str]]: non_academic_names, company_names, emails
+    """
+    non_academic = set()
+    companies = set()
+    emails = set()
 
     for aff in affiliations:
         aff_lower = aff.lower()
 
-        if any(keyword in aff_lower for keyword in NON_ACADEMIC_KEYWORDS):
-            non_academic.append(aff)
+        # 💼 Check if not academic
+        if not any(keyword in aff_lower for keyword in ACADEMIC_KEYWORDS):
+            non_academic.add(extract_person_name(aff))
 
-        if any(keyword in aff_lower for keyword in COMPANY_KEYWORDS):
-            companies.append(aff)
+        # 🏢 Look for company names
+        for keyword in COMPANY_KEYWORDS:
+            if keyword.lower() in aff_lower:
+                companies.add(keyword)
 
-    emails = extract_emails(affiliations)
+        # ✉️ Extract emails
+        found_emails = extract_emails(aff)
+        emails.update(found_emails)
 
-    return list(set(non_academic)), list(set(companies)), emails
+    return non_academic, companies, emails

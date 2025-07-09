@@ -1,6 +1,6 @@
 [project]
 name = "pubmed-fetcher-cli-pavan"
-version = "0.1.0"
+version = "0.1.1"
 description = "CLI tool to fetch and filter PubMed research papers"
 authors = [{ name = "Pavan Kalyan", email = "pavanneelam96@gmail.com" }]
 requires-python = ">=3.10"
@@ -11,24 +11,20 @@ dependencies = [
     "requests",
     "rich",
     "python-dotenv",
-    "fpdf"
+    "fpdf",
+    "faiss-cpu (>=1.11.0,<2.0.0)",
+    "sentence-transformers (>=5.0.0,<6.0.0)"
 ]
 
-[project.scripts]
-pubmed-cli = "pubmed_fetcher.cli:main"
-
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
 [tool.pytest.ini_options]
-pythonpath = "src"
+filterwarnings = [
+    "ignore::DeprecationWarning:numpy.core._multiarray_umath",
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.4.1"
+[tool.poetry]
+packages = [
+  { include = "pubmed_fetcher", from = "src" }
+]
+[tool.poetry.scripts]
+pubmed-fetcher = "pubmed_fetcher.cli:main"
+

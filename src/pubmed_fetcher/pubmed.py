@@ -1,7 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
 from pubmed_fetcher.filters import classify_authors
-
+from pubmed_fetcher.summary import summarize_abstract
 
 def search_and_fetch(query: str, retmax: int = 5) -> list:
     """
@@ -83,18 +83,18 @@ def parse_pubmed_xml(xml_data: str, idlist: list) -> list:
             if aff:
                 affiliations.append(aff)
 
-        # 🧠 Custom logic from filters.py
+        # 🧠 Extract structured fields from affiliations
         non_academic, companies, emails = classify_authors(affiliations)
 
         results.append({
-            "pubmed_id": pubmed_id,
-            "title": title,
-            "publication_date": pub_date,
-            "abstract": abstract,
-            "authors": ", ".join(authors) if authors else "Unknown",
-            "non_academic_authors": "; ".join(non_academic),
-            "company_affiliations": "; ".join(companies),
-            "corresponding_email": "; ".join(emails)
+            "PubmedID": pubmed_id,
+            "Title": title,
+            "Publication Date": pub_date,
+            "Authors": ", ".join(authors) if authors else "Unknown",
+            "Abstract": abstract,
+            "Non-academicAuthor(s)": "; ".join(non_academic),
+            "CompanyAffiliation(s)": "; ".join(companies),
+            "Corresponding Author Email": "; ".join(emails)
         })
 
     return results

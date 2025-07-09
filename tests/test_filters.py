@@ -2,6 +2,7 @@
 
 from pubmed_fetcher.filters import classify_authors, extract_emails
 
+
 def test_classify_authors():
     affiliations = [
         "Department of Biology, Stanford University, USA.",
@@ -12,9 +13,10 @@ def test_classify_authors():
 
     non_academic, companies, emails = classify_authors(affiliations)
 
-    assert "Independent researcher, India" in non_academic
-    assert "Pfizer Inc., New York, NY, USA." in companies or "Google Health, California." in companies
-    assert isinstance(emails, list)
+    assert "Pfizer" in companies
+    assert "John Doe" in non_academic
+    assert "Independent India" in non_academic
+
 
 def test_extract_emails():
     affiliations = [
@@ -23,6 +25,8 @@ def test_extract_emails():
         "Visit our website"
     ]
 
-    emails = extract_emails(affiliations)
+    # Combine all affiliations into one string
+    emails = extract_emails(" ".join(affiliations))
+
     assert "john.doe@university.edu" in emails
     assert "support@pfizer.com" in emails
