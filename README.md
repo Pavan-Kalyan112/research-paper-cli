@@ -6,13 +6,22 @@ A command-line tool to search, fetch, and export research papers from PubMed, wi
 ---
 
 ## 🔍 Features
+✅ Search PubMed papers using flexible query strings
 
-- ✅ Search PubMed papers using flexible queries
-- 📄 Outputs title, authors, abstract, and optional LLM-generated summary
-- 💾 Save output in CSV / PDF / Markdown format
-- 🤖 local LLM support (e.g., `llama3` via Ollama)
-- 📥 Download raw paper data as JSON
-- 🛠️ Built with `Poetry`, `requests`, and `rich`
+🤖 Summarize abstracts using local LLMs like llama3 via Ollama
+
+📄 Export papers in CSV, PDF, or Markdown
+
+📥 Download raw JSON for future use
+
+💡 Intelligent metadata extraction:
+
+* PubmedID, 
+* Title, 
+* Publication Date,
+* Non-academicAuthor(s),
+* CompanyAffiliation(s),
+* Corresponding Author Email
 
 ---
 
@@ -86,6 +95,23 @@ Run with debug logs enabled (useful for troubleshooting):
 ```bash
 poetry run pubmed-cli "covid vaccine" --debug --limit 1
 ```
+#  CSV/Output Columns
+| Field                          | Description                                         |
+| ------------------------------ | --------------------------------------------------- |
+| **PubmedID**                   | Unique identifier for the paper                     |
+| **Title**                      | Title of the paper                                  |
+| **Publication Date**           | Year of publication                                 |
+| **Non-academicAuthor(s)**      | Authors from non-academic institutions              |
+| **CompanyAffiliation(s)**      | Authors affiliated with companies                   |
+| **Corresponding Author Email** | Author contact email                                |
+| **Summary** (optional)         | LLM-generated abstract summary (if `--llm` is used) |
+
+
+# 💬 GPT-powered Chat Mode (RAG)
+#### Ask questions across papers using GPT-based RAG:
+```bash
+poetry run pubmed-cli --rag
+```
 
 ## 🧪 Testing
 
@@ -104,24 +130,21 @@ poetry run pytest
 | 🧪 [Pytest](https://docs.pytest.org/en/7.1.x/)                | Unit testing              |      |
 
 
-## 📋 Sample Output Columns (CSV)
-PubmedID: Unique identifier
+# ================ Build & Publish to Test PyPI ================
 
-Title: Paper title
-
-Publication Date
-
-Non-academic Authors
-
-Company Affiliations
-
-Corresponding Author Email
-
-# PubMed Fetcher CLI project locally, from install to execution
+Step 1: Build the package
+```bash
+poetry build
+```
+Step 2: Upload to Test PyPI
+```bash
+poetry publish --repository testpypi
+```
+# ================== PubMed Fetcher CLI project locally, from install to execution ==============
 
 ### STEP 1: Clone or Move into Your Project Directory
 ```bash
-cd "C:\Users\pavan\OneDrive\Desktop\Research-Paper-Fetcher-CLI"
+cd "C:\.\Research-Paper-Fetcher-CLI"
 ```
 ### STEP 2: (Optional) Create & Activate Virtual Environment
 ```bash
@@ -189,6 +212,7 @@ pip install --index-url https://test.pypi.org/simple/ pubmed-fetcher-cli-pavan
 ```
  # STEP 8: Run the CLI Tool
 Once installed, you can use:
+
 ```bash
 
 pubmed-cli "covid vaccine" --limit 2 --llm
