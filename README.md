@@ -5,6 +5,36 @@ A command-line tool to search, fetch, and export research papers from PubMed, wi
 
 ---
 
+## 📁 Project Structure
+research-paper-fetcher-cli/
+│
+├── src/pubmed_featcher # Core modules
+│           ├── init.py
+│           ├── fetch.py # Fetches papers from PubMed
+│           ├── data_pipeline.py # Parses PubMed results
+│           ├── summarize.py # Sends abstracts to LLM (Ollama)
+│           ├── embedding.py # Generates embeddings using sentence-transformers
+            └── cli.py # Utility functions
+            ├── filters.py # RAG: FAISS-based retrieval
+│           ├── retriever.py # RAG: FAISS-based retrieval
+│           └── utils.py # Utility functions           
+│
+├
+├── requirements.txt # Required Python packages
+├── pyproject.toml # Poetry project configuration
+├── potery.lock 
+├── README.md # Project documentation
+└── test/ # Unit tests
+    └── test_cli.py
+    └── test_embedder.py
+    └── test_llm.py
+    └── test_filters.py
+    └── test_utils.py # Utility functions
+    └── test_pubmed.py
+    └── test_data_pipeline.py
+    └── test_summary.py
+
+
 ## 🔍 Features
 ✅ Search PubMed papers using flexible query strings
 
@@ -25,9 +55,87 @@ A command-line tool to search, fetch, and export research papers from PubMed, wi
 
 ---
 
+## 🛠️ How the Code is Organized
+
+| Module            | Role                                                                 |
+|-------------------|----------------------------------------------------------------------|
+| `cli.py`          | Parses user input and triggers the main pipeline                     |
+| `fetcher/fetch.py`| Makes HTTP requests to PubMed and fetches paper metadata             |
+| `fetcher/parser.py`| Parses titles, authors, abstracts from raw API results              |
+| `fetcher/summarize.py` | Sends content to Ollama for summarization                       |
+| `fetcher/embedding.py` | Generates embeddings using `sentence-transformers`               |
+| `fetcher/retriever.py` | Uses FAISS to retrieve top-k similar abstracts (RAG)             |
+| `fetcher/utils.py`     | Common utility functions (file saving, formatting)               |
+
+---
+
 ## 🧠 LLM Integration
 
-This tool can optionally summarize abstracts using **Ollama** running locally (e.g., `llama3`). You can toggle this using:
+This tool can optionally summarize abstracts using **Ollama** running locally (e.g., `mistral`). You can toggle this using:
+🔍 RAG (Retrieval-Augmented Generation)
+
+🧠 Embeddings
+
+🧰 Tools/Libraries used
+
+🧠 LLM via Ollama
+
+# Enhanced Flowchart Explanation: LLM + RAG + Embeddings in CLI Tool
+┌────────────────────────┐
+│      User Input        │
+│ --query, --summarize   │
+│ --rag, --embedding     │
+└─────────┬──────────────┘
+          │
+          ▼
+┌─────────────────────────────┐
+│ Parse CLI Arguments         │
+│ (argparse)                  │
+└─────────┬───────────────────┘
+          │
+          ▼
+┌─────────────────────────────────────────────┐
+│ Fetch Papers from PubMed API                │
+│ (requests + PubMed E-Utils query)           │
+└─────────┬────────────────────────────────────┘
+          │
+          ▼
+┌───────────────────────────────┐
+│ Extract Title + Abstract      │
+│ from Each Paper               │
+└─────────┬─────────────────────┘
+          │
+          ▼
+┌─────────────────────────────────────────────┐
+│ (Optional) Convert Abstracts to Embeddings  │
+│ → Using SentenceTransformers (e.g., all-MiniLM) │
+│ → For later RAG-based summarization         │
+└─────────┬────────────────────────────────────┘
+          │
+          ▼
+┌─────────────────────────────────────────────┐
+│ (Optional) Retrieval Step (RAG)             │
+│ → Use FAISS to retrieve similar papers      │
+│ → Based on embedding similarity (cosine)    │
+└─────────┬────────────────────────────────────┘
+          │
+          ▼
+┌─────────────────────────────────────────────┐
+│ Summarize Abstract or Retrieved Context     │
+│ → Send to Ollama (local LLM)                │
+│    via HTTP POST                            │
+└─────────┬────────────────────────────────────┘
+          ▼
+┌─────────────────────────────────────────────┐
+│ Receive Response (Summary) from LLM         │
+│ Add it to Final Output Structure            │
+└─────────┬────────────────────────────────────┘
+          ▼
+┌─────────────────────────────────────────────┐
+│ Save Output:                                │
+│ → CSV / Markdown / JSON                     │
+│ → Include title, abstract, summary, etc.    │
+└─────────────────────────────────────────────┘
 
 ## ⚙️ Installation & Setup
 
