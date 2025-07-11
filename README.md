@@ -27,7 +27,7 @@ Retrieval-Augmented Generation for answering domain-specific questions over the 
  **Keyword Filtering**  
 Filter papers by keywords in titles or abstracts.
 
----
+
 Research-Paper-Fetcher-CLI/
 │
 ├── pyproject.toml              # Poetry config file (project metadata, dependencies)
