@@ -2,86 +2,97 @@ import re
 import string
 from typing import List, Tuple, Set
 
-# Add more relevant pharmaceutical/biotech keywords as needed
+__all__ = [
+    "classify_authors",
+    "extract_emails",
+    "extract_person_name",
+]
+
+# ✅ List of pharmaceutical/biotech companies
 COMPANY_KEYWORDS = [
     "Pfizer", "Moderna", "AstraZeneca", "Johnson", "Novartis", "GSK",
     "Merck", "Sanofi", "Roche", "Bayer", "Amgen", "Biogen", "AbbVie",
     "Eli Lilly", "Takeda", "Genentech", "Bristol-Myers", "Regeneron", "Vertex"
 ]
 
-# Common academic institution keywords
+# ✅ Common academic institutions (to exclude)
 ACADEMIC_KEYWORDS = [
     "university", "institute", "college", "school of medicine",
-    "hospital", "center", "centre", "faculty"
+    "hospital", "center", "centre", "faculty", "department"
 ]
 
 
 def extract_emails(text: str) -> Set[str]:
     """
-    Extract email addresses from a string using regex.
+    Extract all email addresses from the given text using regex.
 
     Args:
-        text (str): Input text possibly containing emails.
+        text (str): Text to search for email addresses.
 
     Returns:
-        Set[str]: Set of extracted email addresses.
+        Set[str]: Set of unique email addresses found in the text.
     """
     return set(re.findall(r"[\w\.-]+@[\w\.-]+\.\w+", text))
 
 
 def extract_person_name(affiliation: str) -> str:
     """
-    Heuristic to extract a potential name from an affiliation string.
+    Attempt to extract a person's name from an affiliation string using heuristics.
 
     Args:
-        affiliation (str): Raw affiliation text.
+        affiliation (str): An author's affiliation.
 
     Returns:
-        str: Extracted name or raw snippet.
+        str: Extracted name if possible, otherwise "Unknown".
     """
     tokens = affiliation.strip().split()
-    # Remove punctuation from each token to avoid trailing commas, periods, etc.
     name_tokens = [token.strip(string.punctuation) for token in tokens if token.istitle()]
 
     if len(name_tokens) >= 2:
         return f"{name_tokens[0]} {name_tokens[1]}"
     elif name_tokens:
         return name_tokens[0]
-    else:
-        return "Unknown"
+    return "Unknown"
 
 
 def classify_authors(affiliations: List[str]) -> Tuple[Set[str], Set[str], Set[str]]:
     """
-    Classifies affiliations into:
-    - Non-academic author names
-    - Company affiliations based on keyword match
-    - Emails extracted from affiliation text
+    Classify author affiliations into:
+        - Non-academic authors
+        - Company affiliations
+        - Email addresses
 
     Args:
         affiliations (List[str]): A list of affiliation strings.
 
     Returns:
-        Tuple[Set[str], Set[str], Set[str]]: non_academic_names, company_names, emails
+        Tuple:
+            - Set[str]: Names of non-academic authors.
+            - Set[str]: Company names detected in affiliations.
+            - Set[str]: Emails extracted from affiliations.
     """
-    non_academic = set()
-    companies = set()
-    emails = set()
+    non_academic_names = set()
+    company_names = set()
+    email_addresses = set()
 
     for aff in affiliations:
         aff_lower = aff.lower()
 
-        # 💼 Check if not academic
-        if not any(keyword in aff_lower for keyword in ACADEMIC_KEYWORDS):
-            non_academic.add(extract_person_name(aff))
+        # Check for academic keywords
+        is_academic = any(keyword in aff_lower for keyword in ACADEMIC_KEYWORDS)
 
-        # 🏢 Look for company names
-        for keyword in COMPANY_KEYWORDS:
-            if keyword.lower() in aff_lower:
-                companies.add(keyword)
+        # If not academic, try extracting non-academic author name
+        if not is_academic:
+            name = extract_person_name(aff)
+            if name != "Unknown":
+                non_academic_names.add(name)
 
-        # ✉️ Extract emails
-        found_emails = extract_emails(aff)
-        emails.update(found_emails)
+        # Check for company affiliations (case-insensitive)
+        for company in COMPANY_KEYWORDS:
+            if company.lower() in aff_lower:
+                company_names.add(company)
 
-    return non_academic, companies, emails
+        # Extract email addresses
+        email_addresses.update(extract_emails(aff))
+
+    return non_academic_names, company_names, email_addresses

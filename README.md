@@ -1,346 +1,157 @@
-# 🧪 Research Paper Fetcher CLI
+# 🧪 PubMed Research Paper Fetcher CLI Tool
 
-A powerful command-line tool to **search**, **summarize**, and **save** research papers from **PubMed** using its full query syntax. Powered by **local LLMs like Ollama** for summarization.
-A command-line tool to search, fetch, and export research papers from PubMed, with optional LLM summarization using Ollama.
+A powerful Python CLI tool to search PubMed, summarize abstracts using LLMs, perform semantic search with FAISS, and answer questions using RAG. Designed for researchers and developers to easily interact with scientific literature from the command line.
 
 ---
 
-## 📁 Project Structure
-research-paper-fetcher-cli/
+##  Features
+
+ **Fetch Research Papers**  
+Use full PubMed query syntax to retrieve research articles.
+
+ **Summarize with LLM**  
+Summarize abstracts using local or remote LLMs like Mistral (via Ollama) or OpenAI.
+
+ **Export Options**  
+Export results to **CSV**, **PDF**, or **Markdown** formats.
+
+ **Semantic Search with FAISS**  
+Embed papers and perform vector-based similarity search using Sentence Transformers and FAISS.
+
+ **Chat with Your Research Data**  
+Interactive LLM-based chat over the summarized results.
+
+ **RAG Mode**  
+Retrieval-Augmented Generation for answering domain-specific questions over the data.
+
+ **Keyword Filtering**  
+Filter papers by keywords in titles or abstracts.
+
+---
+Research-Paper-Fetcher-CLI/
 │
-├── src/pubmed_featcher # Core modules
-│           ├── init.py
-│           ├── fetch.py # Fetches papers from PubMed
-│           ├── data_pipeline.py # Parses PubMed results
-│           ├── summarize.py # Sends abstracts to LLM (Ollama)
-│           ├── embedding.py # Generates embeddings using sentence-transformers
-            └── cli.py # Utility functions
-            ├── filters.py # RAG: FAISS-based retrieval
-│           ├── retriever.py # RAG: FAISS-based retrieval
-│           └── utils.py # Utility functions           
+├── pyproject.toml              # Poetry config file (project metadata, dependencies)
+├── README.md                   # Project description for GitHub/TestPyPI
+├── LICENSE                     # License file (e.g., MIT)
+├── .gitignore                  # Git ignored files
+├── poetry.lock                 # Poetry lock file (auto-generated)
 │
-├
-├── requirements.txt # Required Python packages
-├── pyproject.toml # Poetry project configuration
-├── potery.lock 
-├── README.md # Project documentation
-└── test/ # Unit tests
-    └── test_cli.py
-    └── test_embedder.py
-    └── test_llm.py
-    └── test_filters.py
-    └── test_utils.py # Utility functions
-    └── test_pubmed.py
-    └── test_data_pipeline.py
-    └── test_summary.py
+├── dist/                       # Generated distribution packages
+│   ├── pubmed_fetcher-0.1.2.tar.gz
+│   └── pubmed_fetcher-0.1.2-py3-none-any.whl
+│
+├── exports/                    # Generated output files (CSVs, PDFs, JSON)
+│   └── Result.csv
+│
+├── tests/                      # Unit tests for the package
+│   ├── test_cli.py
+│   ├── test_chat.py
+│   ├── test_config.py
+│   ├── test_data_pipeline.py
+│   ├── test_embedder.py
+│   ├── test_filters.py
+│   ├── test_llm.py
+│   ├── test_pubmed.py
+│   ├── test_rag.py
+│   ├── test_semantic_search.py
+│   ├── test_summary.py
+│   └── test_utils.py
+│
+└── src/                        # Source code root
+    └── pubmed_fetcher/         # Main Python package
+        ├── __init__.py
+        ├── cli.py              # Entry point for the command-line interface using argparse.
+        ├── chat.py             # Interactive chat functionality powered by LLMs.
+        ├── config.py           # Loads and manages configuration from .env or environment variables.
+        ├── data_pipeline.py    # Cleans, parses, and prepares data from PubMed for further processing.
+        ├── embedder.py         # Converts abstracts/summaries into embeddings using SentenceTransformer and manages FAISS indexing.
+        ├── filters.py          # Handles keyword-based filtering and company-affiliation extraction.
+        ├── llm.py              # Interfaces with an LLM (e.g., GPT) to generate paper summaries.
+        ├── pubmed.py           # PFetches research papers from the PubMed API.
+        ├── rag.py              # Implements a Retrieval-Augmented Generation assistant using indexed data.
+        ├── semantic_search.py  # Supports FAISS-based and brute-force semantic search over embeddings.
+        ├── summary.py          # Exports results to various formats (CSV, PDF, Markdown).
+        └── utils.py            # Helper utilities used across modules.
 
 
-## 🔍 Features
-✅ Search PubMed papers using flexible query strings
 
-🤖 Summarize abstracts using local LLMs like llama3 via Ollama
+## 📦 Installation
 
-📄 Export papers in CSV, PDF, or Markdown
+Install from **TestPyPI**
 
-📥 Download raw JSON for future use
+# Usage
+After installation, use the CLI as follows:
 
-💡 Intelligent metadata extraction:
-
-* PubmedID, 
-* Title, 
-* Publication Date,
-* Non-academicAuthor(s),
-* CompanyAffiliation(s),
-* Corresponding Author Email
-
----
-
-## 🛠️ How the Code is Organized
-
-| Module            | Role                                                                 |
-|-------------------|----------------------------------------------------------------------|
-| `cli.py`          | Parses user input and triggers the main pipeline                     |
-| `fetcher/fetch.py`| Makes HTTP requests to PubMed and fetches paper metadata             |
-| `fetcher/parser.py`| Parses titles, authors, abstracts from raw API results              |
-| `fetcher/summarize.py` | Sends content to Ollama for summarization                       |
-| `fetcher/embedding.py` | Generates embeddings using `sentence-transformers`               |
-| `fetcher/retriever.py` | Uses FAISS to retrieve top-k similar abstracts (RAG)             |
-| `fetcher/utils.py`     | Common utility functions (file saving, formatting)               |
-
----
-
-## 🧠 LLM Integration
-
-This tool can optionally summarize abstracts using **Ollama** running locally (e.g., `mistral`). You can toggle this using:
-🔍 RAG (Retrieval-Augmented Generation)
-
-🧠 Embeddings
-
-🧰 Tools/Libraries used
-
-🧠 LLM via Ollama
-
-# Enhanced Flowchart Explanation: LLM + RAG + Embeddings in CLI Tool
-┌────────────────────────┐
-│      User Input        │
-│ --query, --summarize   │
-│ --rag, --embedding     │
-└─────────┬──────────────┘
-          │
-          ▼
-┌─────────────────────────────┐
-│ Parse CLI Arguments         │
-│ (argparse)                  │
-└─────────┬───────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────────────┐
-│ Fetch Papers from PubMed API                │
-│ (requests + PubMed E-Utils query)           │
-└─────────┬────────────────────────────────────┘
-          │
-          ▼
-┌───────────────────────────────┐
-│ Extract Title + Abstract      │
-│ from Each Paper               │
-└─────────┬─────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────────────┐
-│ (Optional) Convert Abstracts to Embeddings  │
-│ → Using SentenceTransformers (e.g., all-MiniLM) │
-│ → For later RAG-based summarization         │
-└─────────┬────────────────────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────────────┐
-│ (Optional) Retrieval Step (RAG)             │
-│ → Use FAISS to retrieve similar papers      │
-│ → Based on embedding similarity (cosine)    │
-└─────────┬────────────────────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────────────┐
-│ Summarize Abstract or Retrieved Context     │
-│ → Send to Ollama (local LLM)                │
-│    via HTTP POST                            │
-└─────────┬────────────────────────────────────┘
-          ▼
-┌─────────────────────────────────────────────┐
-│ Receive Response (Summary) from LLM         │
-│ Add it to Final Output Structure            │
-└─────────┬────────────────────────────────────┘
-          ▼
-┌─────────────────────────────────────────────┐
-│ Save Output:                                │
-│ → CSV / Markdown / JSON                     │
-│ → Include title, abstract, summary, etc.    │
-└─────────────────────────────────────────────┘
-
-## ⚙️ Installation & Setup
-
-### 1 Clone the repository
-
-git clone https://github.com/Pavan-Kalyan112/Research-Paper-Fetcher-CLI.git
-cd Research-Paper-Fetcher-CLI
-
-### 2 Install dependencies using Poetry
-```bash
-poetry install
-```
-
-## 🚀 Usage
-
-### Run the tool from the CLI using Poetry:
-
-Search for papers on a given topic:
-
-## 📌 CLI Usage Commands
-
-### ➤ Search PubMed papers:
-```bash
-poetry run pubmed-cli "covid vaccine"
-
-```
---llm
-## ➤ 🤖Enable LLM summarization (requires Ollama):
-
-```bash
-poetry run pubmed-cli "covid vaccine" --llm
-```
-
-##  💾 Export Results
-
-Export search results in various formats:
-
-## ➤ Save output to CSV:
-```bash
-poetry run pubmed-cli "covid vaccine" --file papers.csv --format csv
-```
-## ➤ Save as PDF:
-```bash
-poetry run pubmed-cli "covid vaccine" --file output.pdf --format pdf
-```
-
-## ➤ Save as Markdown:
-```bash
-poetry run pubmed-cli "covid vaccine" --file result.md --format md
-```
-
-## ➤ Download raw paper data as JSON:
-```bash
-poetry run pubmed-cli "covid vaccine" --download --file raw_data
-```
-
-## ➤ Enable debug logs:
-```bash
-poetry run pubmed-cli "covid vaccine" --llm --debug
-```
-
-## 🐞 Enable Debug Logs
-
-Run with debug logs enabled (useful for troubleshooting):
-```bash
-poetry run pubmed-cli "covid vaccine" --debug --limit 1
-```
-#  CSV/Output Columns
-| Field                          | Description                                         |
-| ------------------------------ | --------------------------------------------------- |
-| **PubmedID**                   | Unique identifier for the paper                     |
-| **Title**                      | Title of the paper                                  |
-| **Publication Date**           | Year of publication                                 |
-| **Non-academicAuthor(s)**      | Authors from non-academic institutions              |
-| **CompanyAffiliation(s)**      | Authors affiliated with companies                   |
-| **Corresponding Author Email** | Author contact email                                |
-| **Summary** (optional)         | LLM-generated abstract summary (if `--llm` is used) |
-
-
-# 💬 GPT-powered Chat Mode (RAG)
-#### Ask questions across papers using GPT-based RAG:
-```bash
-poetry run pubmed-cli --rag
-```
-
-## 🧪 Testing
-
-Run all unit tests using:
-```bash
-poetry run pytest
-```
-
-| Tool                                                          | Description               |      |
-| ------------------------------------------------------------- | ------------------------- | ---- |
-| 🧬 [Entrez API](https://www.ncbi.nlm.nih.gov/books/NBK25501/) | Fetch papers from PubMed  |      |
-| 📦 [Poetry](https://python-poetry.org/)                       | Dependency management     |      |
-| 🤗 [Ollama](https://ollama.com/)                              | Local LLM serving backend |      |
-| 📄 [FPDF](https://pyfpdf.github.io/fpdf2/)                    | PDF generation            |      |
-| 🌈 [Rich](https://rich.readthedocs.io/en/stable/)             | Stylish CLI output        |      |
-| 🧪 [Pytest](https://docs.pytest.org/en/7.1.x/)                | Unit testing              |      |
-
-
-# ================ Build & Publish to Test PyPI ================
-
-Step 1: Build the package
-```bash
-poetry build
-```
-Step 2: Upload to Test PyPI
-```bash
-poetry publish --repository testpypi
-```
-# ================== PubMed Fetcher CLI project locally, from install to execution ==============
-
-### STEP 1: Clone or Move into Your Project Directory
-```bash
-cd "C:\.\Research-Paper-Fetcher-CLI"
-```
-### STEP 2: (Optional) Create & Activate Virtual Environment
-```bash
-python -m venv venv
-.\venv\Scripts\activate
-```
-### STEP 3: Install Required Packages
-
-### # If you're using poetry:
-
-```bash
-poetry install
-
-```
-
-#### Or if you're using requirements.txt (manual setup):
-
+### Basic Search and Save
 ```bash
 
-pip install -r requirements.txt
+python -m pubmed_fetcher.cli --query "cancer therapy" -l 10 --format csv -f cancer_results
 ```
-
-#### If not available, install these manually:
-
+### Summarize Abstracts with LLM
 ```bash
 
-pip install requests rich python-dotenv
+python -m pubmed_fetcher.cli --query "covid-19 vaccine" -l 5 --llm --format pdf -f covid_summary
 ```
-
-#### And for development:
-
+### Start Semantic Search
 ```bash
 
-pip install pytest build twine
+python -m pubmed_fetcher.cli --query "machine learning in genomics" --llm --format csv -f ml_genomics
+python -m pubmed_fetcher.cli --chat
 ```
-## STEP 4: Run Unit Tests (Optional)
-#### Make sure everything works:
-```bash
-poetry run pytest
-# or just
-pytest
-```
-
-# STEP 5: Build the Package (Only for PyPI or TestPyPI Upload)
-```bash
-python -m build
-
-It creates .whl and .tar.gz files in the dist/ directory.
-```
-# STEP 6: Upload to Test PyPI (If needed)
-```bash
-python -m twine upload --repository testpypi dist/*
-```
-# STEP 7: Install the Package (from local or TestPyPI)
-```bash
-If installing locally:
-
-
-pip install dist/pubmed_fetcher_cli_pavan-0.1.0-py3-none-any.whl
-Or from Test PyPI (replace <token> if needed):
-
-```
-```bash
-pip install --index-url https://test.pypi.org/simple/ pubmed-fetcher-cli-pavan
-```
- # STEP 8: Run the CLI Tool
-Once installed, you can use:
-
+### Use RAG Mode for Q&A
 ```bash
 
-pubmed-cli "covid vaccine" --limit 2 --llm
-```
-If it says 'pubmed-cli' is not recognized, then try:
-
-```bash
-python -m pubmed_fetcher.cli "covid vaccine" --limit 2 --llm
+python -m pubmed_fetcher.cli --rag --use-file exports/ml_genomics.json
 ```
 
-### 🔧 Optional Flags
+# CLI Options
+| Argument           | Description                             |
+| ------------------ | --------------------------------------- |
+| `--query`          | PubMed search term                      |
+| `--limit, -l`      | Number of articles to fetch             |
+| `--file, -f`       | Output filename (without extension)     |
+| `--format`         | Export format: `csv`, `pdf`, or `md`    |
+| `--llm`            | Use LLM to summarize abstracts          |
+| `--download`       | Save raw JSON from PubMed only          |
+| `--filter-keyword` | Filter by keyword in title/abstract     |
+| `--chat`           | Chat with summarized research using LLM |
+| `--rag`            | Retrieval-Augmented Generation mode     |
+| `--use-file`       | Specify a file for `--chat` or `--rag`  |
+| `--debug`          | Enable debug logs                       |
 
-| Flag             | Description                                      | Example Usage                                      |
-|------------------|--------------------------------------------------|----------------------------------------------------|
-| `--llm`          | Use LLM to summarize abstracts                   | `pubmed-cli "covid vaccine" --llm`                 |
-| `--format`       | Output format: `csv`, `pdf`, or `md`             | `--format pdf`                                     |
-| `--file`         | Output filename (used with `--format`)           | `--file output.pdf`                                |
-| `--download`     | Download and save raw JSON data only             | `--download --file raw_data`                       |
-| `--debug`        | Enable debug logging and show internal logs      | `--debug`                                          |
+# Output Files
+* exports/your_file.csv — Fetched articles with metadata.
 
-> Combine flags as needed.  
-> Example:  
-> `pubmed-cli "covid vaccine" --limit 5 --llm --format csv --file result.csv --debug`
+* exports/your_file.pdf — LLM summaries in PDF.
+
+* exports/summarized_results.json — Input for chat/RAG.
+
+* exports/faiss_index.bin — FAISS vector index.
+
+* .last_results.json — Cached results.
+
+# LLM Integration
+* 🔗 Supports Ollama (e.g., mistral, llama2) locally
+
+* Embeddings powered by **sentence-transformers (default: all-MiniLM-L6-v2)**
+
+# Dependencies
+* requests
+
+* sentence-transformers
+
+* faiss-cpu
+
+* PyMuPDF (for PDF export)
+
+* rich
+
+* argparse
+
+
+* ollama (if using local models)
+
+# Author
+Developed by **Pavan Kalyan Neelam**
+For contributions or issues, please submit a pull request or open an issue.
+

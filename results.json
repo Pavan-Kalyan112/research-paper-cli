@@ -1,0 +1,52 @@
+[
+  {
+    "PubmedID": "40617930",
+    "Title": "Explainable artificial intelligence driven insights into smoking prediction using machine learning and clinical parameters.",
+    "Publication Date": "2025",
+    "Authors": "S Aishwarya, P C Siddalingaswamy, Krishnaraj Chadaga",
+    "Abstract": "Smoking is a leading cause of various health conditions, including cancer and respiratory diseases. Smokers often face medical restrictions such as limitations in blood and organ donation, reduced effectiveness of medications, and increased surgical complications. These impacts underscore the need for early detection of smoking status to enable timely intervention. This study explores the use of Artificial Intelligence (AI) and Machine Learning (ML) techniques to predict smoking status based on health parameters, including biosignals and clinical biomarkers. A balanced subset of 2,000 instances was sampled from a publicly available Kaggle dataset comprising clinical and biometric features. Multiple ML models were implemented, including Random Forest Classifier, Logistic Regression, Decision Tree Classifier, K-Nearest Neighbors, CatBoost Classifier, and an Artificial Neural Network. The Random Forest Classifier achieved the better performance with an accuracy of 0.80, precision of 0.80, recall of 0.80, and F1-score of 0.79. To enhance model interpretability, four Explainable Artificial Intelligence (XAI) techniques were applied: Shapley Additive Explanations (SHAP), Local Interpretable Model-Agnostic Explanations (LIME), QLattice, and Anchor. SHAP identified hemoglobin as the most influential predictor, while LIME, QLattice, and Anchor highlighted the role of gamma-glutamyl transferase (t). Interactions between hemoglobin, GTP, and height were associated with more accurate predictions. The integration of ensemble modeling and multiple XAI approaches offers deeper interpretability than prior studies, providing healthcare providers and policymakers with a robust, transparent decision-support tool for targeted intervention strategies.",
+    "Non-academicAuthor(s)": "Krishnaraj Chadaga; P C Siddalingaswamy; S Aishwarya",
+    "CompanyAffiliation(s)": "",
+    "Corresponding Author Email": "pcs.swamy@manipal.edu.; krishnaraj.chadaga@manipal.edu."
+  },
+  {
+    "PubmedID": "40608017",
+    "Title": "A blood metabolic signature of a healthy lifestyle and colorectal cancer risk: results from cohort and Mendelian randomization studies.",
+    "Publication Date": "2025",
+    "Authors": "Fangcheng Yuan, Yu Shuai, Wanqing Wen, Guochong Jia, Rikje Ruiter, Shuai Xu, Yaohua Yang, Jirong Long, Mohsen Ghanbari, Xiao-Ou Shu, Danxia Yu, Wei Zheng",
+    "Abstract": "Despite a healthy lifestyle being linked to reduced colorectal cancer (CRC) risk, prior studies using surveys to measure lifestyle factors failed to consider potential inter-individual heterogeneity in metabolic responses. We aimed to characterize a metabolic signature as a measure of metabolic responses to a healthy lifestyle and evaluate its association with CRC risk.",
+    "Non-academicAuthor(s)": "Yu Shuai; Mohsen Ghanbari",
+    "CompanyAffiliation(s)": "",
+    "Corresponding Author Email": ""
+  },
+  {
+    "PubmedID": "40607046",
+    "Title": "An untargeted metabolomics analysis suggests pathophysiological changes for post cardiac arrest syndrome.",
+    "Publication Date": "2025",
+    "Authors": "Junhong Wang, Hua Zhang, Fan Yang, Ayijiang Jiamaliding, Yan Wang, Qingbian Ma",
+    "Abstract": "Cardiac arrest (CA) is a significant cause of mortality worldwide. However, the differences of untargeted metabolomics of CA patients have rarely been described.",
+    "Non-academicAuthor(s)": "",
+    "CompanyAffiliation(s)": "",
+    "Corresponding Author Email": ""
+  },
+  {
+    "PubmedID": "40598814",
+    "Title": "CML stem cells and their interactions and adaptations to tyrosine kinase inhibitors.",
+    "Publication Date": "2025",
+    "Authors": "Stein-Erik Gullaksen, Maria Omsland, Mathias Brevik, Johanna Letzner, Stine Haugstvedt, Bj\u00f8rn Tore Gjertsen",
+    "Abstract": "Chronic myeloid leukemia (CML) is a hematopoietic stem cell malignancy, driven by the pathognomonic oncogenic fusion protein BCR::ABL1. Tyrosine kinase inhibitors (TKIs) targeting ABL1 have increased the life expectancy of patients with CML to near levels of age-matched healthy individuals. Intriguingly, the response to TKIs varies substantially and is related to observations that CML leukemic stem cells (LSCs) are less sensitive to TKIs. LSC-derived suboptimal response is suggested to explain failing treatment free remission (TFR) in approximately 60% of patients after stopping TKI treatment. Identification of novel and druggable targets on CML LSCs is a possible pathway for increasing TFR. Here we will focus on the role of CML LSCs in initial patient response to TKI therapy, and the possible interactions that LSC may experience in the bone marrow stroma. Adaptation of LSC and stroma is likely to play a central role in the heterogenous responses. Even if overall survival in CML is outstanding, deeper understanding of LSC biology may help more patients to avoid life-long therapy.",
+    "Non-academicAuthor(s)": "",
+    "CompanyAffiliation(s)": "",
+    "Corresponding Author Email": ""
+  },
+  {
+    "PubmedID": "40598679",
+    "Title": "The status of occult HBV infection in a high endemic region: risk of community HBV transmission and reactivation.",
+    "Publication Date": "2025",
+    "Authors": "Hussein Mukasa Kafeero, Ponsiano Ocama, Dorothy Ndagire, Abdul Walusansa, Mariam Namusoke, Ali Kudamba, Fahad Muwanda, Hakim Sendagire",
+    "Abstract": "Occult hepatitis B virus (OBI) infection, characterized by the presence of HBV DNA in the absence of detectable HBsAg in the blood, is considered a potential hidden pathway for HBV transmission and reactivation, which can lead to liver cancer. This study aimed to assess the prevalence of OBI in a region of Uganda with high HBV endemicity, in order to help explain variations in HBV distribution within the country.",
+    "Non-academicAuthor(s)": "",
+    "CompanyAffiliation(s)": "",
+    "Corresponding Author Email": "husseinmukasakafeero@gmail.com."
+  }
+]

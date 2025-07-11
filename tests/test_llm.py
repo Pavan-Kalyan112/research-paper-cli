@@ -1,79 +1,79 @@
-import os
 import pytest
-from unittest.mock import patch, Mock
-from importlib import reload
-
-# Force environment variable for all tests
-os.environ["USE_LLM"] = "true"
-
-from pubmed_fetcher import llm
+from unittest.mock import patch, MagicMock
+import pubmed_fetcher.llm as llm
 
 
-# ------------------- summarize_with_llm tests -------------------
+# -------- summarize_with_llm --------
 
-def test_summarize_with_llm_disabled(monkeypatch):
-    monkeypatch.setenv("USE_LLM", "false")
-    reload(llm)
-    result = llm.summarize_with_llm("Some abstract")
-    assert "disabled" in result.lower()
-    monkeypatch.setenv("USE_LLM", "true")
-    reload(llm)  # restore
+def test_summarize_with_llm_valid():
+    abstract = "Hair loss affects millions of people globally."
 
-def test_summarize_with_empty_abstract():
-    result = llm.summarize_with_llm("   ")
-    assert "empty" in result.lower()
+    mock_response = MagicMock()
+    mock_response.json.return_value = {"response": "Hair loss is a common condition..."}
+    mock_response.status_code = 200
 
-@patch("requests.post")
-def test_summarize_with_llm_success(mock_post):
-    mock_post.return_value = Mock(status_code=200)
-    mock_post.return_value.json.return_value = {"response": "This is a summary."}
-    result = llm.summarize_with_llm("A research abstract.")
-    assert result == "This is a summary."
-
-@patch("requests.post")
-def test_summarize_with_llm_empty_response(mock_post):
-    mock_post.return_value = Mock(status_code=200)
-    mock_post.return_value.json.return_value = {"response": ""}
-    result = llm.summarize_with_llm("A research abstract.")
-    assert "no summary" in result.lower()
-
-@patch("requests.post", side_effect=Exception("Something went wrong"))
-def test_summarize_with_llm_exception(mock_post):
-    result = llm.summarize_with_llm("Abstract content")
-    assert "unexpected" in result.lower()
+    with patch("pubmed_fetcher.llm.requests.post", return_value=mock_response):
+        summary = llm.summarize_with_llm(abstract)
+        assert "Hair loss is a common condition" in summary
 
 
-# ------------------- chat_with_llm tests -------------------
+def test_summarize_with_llm_empty():
+    summary = llm.summarize_with_llm("")
+    assert summary == "⚠️ Empty abstract provided."
 
-def test_chat_with_llm_disabled(monkeypatch):
-    monkeypatch.setenv("USE_LLM", "false")
-    reload(llm)
-    result = llm.chat_with_llm("What is AI?")
-    assert "disabled" in result.lower()
-    monkeypatch.setenv("USE_LLM", "true")
-    reload(llm)
 
-def test_chat_with_llm_empty_prompt():
-    result = llm.chat_with_llm("   ")
-    assert "prompt is empty" in result.lower()
+def test_summarize_with_llm_timeout():
+    with patch("pubmed_fetcher.llm.requests.post", side_effect=llm.requests.exceptions.Timeout):
+        summary = llm.summarize_with_llm("Some abstract")
+        assert "timed out" in summary.lower()
 
-@patch("requests.post")
-def test_chat_with_llm_success_message_content(mock_post):
-    mock_post.return_value = Mock(status_code=200)
-    mock_post.return_value.json.return_value = {
-        "message": {"content": "This is the answer."}
-    }
-    result = llm.chat_with_llm("Explain AI")
-    assert result == "This is the answer."
 
-@patch("requests.post")
-def test_chat_with_llm_fallback_response(mock_post):
-    mock_post.return_value = Mock(status_code=200)
-    mock_post.return_value.json.return_value = {"response": "Fallback response"}
-    result = llm.chat_with_llm("Fallback test")
-    assert result == "Fallback response"
+def test_summarize_with_llm_network_error():
+    with patch("pubmed_fetcher.llm.requests.post", side_effect=llm.requests.exceptions.ConnectionError("Network down")):
+        summary = llm.summarize_with_llm("Some abstract")
+        assert "network error" in summary.lower()
 
-@patch("requests.post", side_effect=Exception("Something broke"))
-def test_chat_with_llm_exception(mock_post):
-    result = llm.chat_with_llm("Some question")
-    assert "unexpected" in result.lower()
+
+# -------- chat_with_llm --------
+
+def test_chat_with_llm_valid():
+    prompt = "Explain CRISPR gene editing."
+
+    mock_response = MagicMock()
+    mock_response.json.return_value = {"message": {"content": "CRISPR is a gene editing technique..."}}
+    mock_response.status_code = 200
+
+    with patch("pubmed_fetcher.llm.requests.post", return_value=mock_response):
+        response = llm.chat_with_llm(prompt)
+        assert "CRISPR" in response
+
+
+def test_chat_with_llm_empty():
+    response = llm.chat_with_llm("")
+    assert response == "⚠️ Prompt is empty."
+
+
+def test_chat_with_llm_timeout():
+    with patch("pubmed_fetcher.llm.requests.post", side_effect=llm.requests.exceptions.Timeout):
+        response = llm.chat_with_llm("Explain DNA")
+        assert "timed out" in response.lower()
+
+
+def test_chat_with_llm_network_error():
+    with patch("pubmed_fetcher.llm.requests.post", side_effect=llm.requests.exceptions.ConnectionError("No internet")):
+        response = llm.chat_with_llm("Explain cells")
+        assert "network error" in response.lower()
+
+
+# -------- chat_with_retry --------
+
+def test_chat_with_retry_success_on_first_try():
+    with patch("pubmed_fetcher.llm.chat_with_llm", return_value="✅ Good response"):
+        result = llm.chat_with_retry("test prompt", retries=3)
+        assert "✅" in result
+
+
+def test_chat_with_retry_fails_all_attempts():
+    with patch("pubmed_fetcher.llm.chat_with_llm", return_value="⚠️ Failed"):
+        result = llm.chat_with_retry("retry prompt", retries=2)
+        assert "failed to respond" in result.lower()

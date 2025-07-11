@@ -1,49 +1,64 @@
 import requests
 import xml.etree.ElementTree as ET
 from typing import List, Dict
+import os
+import re
 
 ENTREZ_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
-EMAIL = "neelampavan95@gmail.com"  # Change to your email
+EMAIL = os.getenv("NCBI_EMAIL", "neelampavan95@gmail.com")  # 🔧 Configurable via env var
 
-# Add more companies if needed
+# Define known pharmaceutical companies (expandable)
 COMPANY_KEYWORDS = [
     "Pfizer", "Moderna", "AstraZeneca", "Johnson", "Novartis", "GSK",
     "Sanofi", "Bayer", "Roche", "Merck", "AbbVie", "Bristol-Myers"
 ]
 
-
 def fetch_pubmed_ids(query: str, max_results: int = 10) -> List[str]:
     """
-    Fetch PubMed IDs using ESearch API.
+    Fetch PubMed IDs using ESearch API based on a given query.
     """
-    response = requests.get(f"{ENTREZ_BASE}esearch.fcgi", params={
-        "db": "pubmed",
-        "term": query,
-        "retmode": "json",
-        "retmax": max_results,
-        "email": EMAIL
-    })
-    response.raise_for_status()
-    return response.json()["esearchresult"].get("idlist", [])
-
+    try:
+        response = requests.get(
+            f"{ENTREZ_BASE}esearch.fcgi",
+            params={
+                "db": "pubmed",
+                "term": query,
+                "retmode": "json",
+                "retmax": max_results,
+                "email": EMAIL
+            },
+            timeout=10
+        )
+        response.raise_for_status()
+        return response.json().get("esearchresult", {}).get("idlist", [])
+    except requests.RequestException as e:
+        print(f"❌ Error fetching PubMed IDs: {e}")
+        return []
 
 def fetch_articles_xml(pmids: List[str]) -> ET.Element:
     """
-    Fetch full XML article metadata from PubMed using EFetch API.
+    Fetch PubMed article details in XML format via EFetch API.
     """
-    response = requests.get(f"{ENTREZ_BASE}efetch.fcgi", params={
-        "db": "pubmed",
-        "id": ",".join(pmids),
-        "retmode": "xml",
-        "email": EMAIL
-    })
-    response.raise_for_status()
-    return ET.fromstring(response.content)
-
+    try:
+        response = requests.get(
+            f"{ENTREZ_BASE}efetch.fcgi",
+            params={
+                "db": "pubmed",
+                "id": ",".join(pmids),
+                "retmode": "xml",
+                "email": EMAIL
+            },
+            timeout=10
+        )
+        response.raise_for_status()
+        return ET.fromstring(response.content)
+    except requests.RequestException as e:
+        print(f"❌ Error fetching article XML: {e}")
+        return ET.Element("Empty")
 
 def extract_info(article: ET.Element) -> Dict:
     """
-    Parse metadata from a single PubMed XML article.
+    Extract structured metadata from a PubMed XML article node.
     """
     pmid = article.findtext(".//PMID") or "N/A"
     title = article.findtext(".//ArticleTitle") or "No title available"
@@ -56,22 +71,28 @@ def extract_info(article: ET.Element) -> Dict:
     emails = set()
 
     for author in article.findall(".//Author"):
-        first = author.findtext("ForeName") or ""
-        last = author.findtext("LastName") or ""
+        first = author.findtext("ForeName", "")
+        last = author.findtext("LastName", "")
         full_name = f"{first} {last}".strip()
 
         affil = author.findtext(".//AffiliationInfo/Affiliation")
         if affil:
-            if "univ" not in affil.lower() and "hospital" not in affil.lower():
+            affil_lower = affil.lower()
+
+            # Non-academic detection
+            if "univ" not in affil_lower and "hospital" not in affil_lower:
                 non_academic_authors.add(full_name)
 
+            # Match pharma company
             for company in COMPANY_KEYWORDS:
-                if company.lower() in affil.lower():
+                if company.lower() in affil_lower:
                     company_affiliations.add(company)
 
-            emails.update(word for word in affil.split() if "@" in word)
+            # Extract emails using regex
+            emails.update(re.findall(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", affil))
 
-        authors.append(full_name)
+        if full_name:
+            authors.append(full_name)
 
     return {
         "PubmedID": pmid,
@@ -84,16 +105,25 @@ def extract_info(article: ET.Element) -> Dict:
         "Corresponding Author Email": "; ".join(emails)
     }
 
-
 def search_and_fetch(query: str, limit: int = 10) -> List[Dict]:
     """
-    Full pipeline from query → XML fetch → metadata extraction.
+    Complete pipeline to fetch and parse PubMed articles.
     """
     pmids = fetch_pubmed_ids(query, limit)
     if not pmids:
+        print("⚠️ No PubMed IDs found.")
         return []
 
     xml_root = fetch_articles_xml(pmids)
     articles = xml_root.findall(".//PubmedArticle")
 
     return [extract_info(article) for article in articles]
+
+# 🔍 Dev/test CLI entry point
+if __name__ == "__main__":
+    query = input("🔎 Enter a PubMed query: ")
+    results = search_and_fetch(query, limit=5)
+    for idx, paper in enumerate(results, 1):
+        print(f"\n📄 Paper {idx}")
+        for k, v in paper.items():
+            print(f"{k}: {v}")

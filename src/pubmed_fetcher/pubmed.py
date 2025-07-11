@@ -1,7 +1,17 @@
+import os
 import requests
 import xml.etree.ElementTree as ET
+from rich.console import Console
+from dotenv import load_dotenv
+
 from pubmed_fetcher.filters import classify_authors
 from pubmed_fetcher.summary import summarize_abstract
+
+load_dotenv()
+console = Console()
+
+NCBI_EMAIL = os.getenv("NCBI_EMAIL", "neelampavan95@gmail.com")  # Optional override
+
 
 def search_and_fetch(query: str, retmax: int = 5) -> list:
     """
@@ -17,43 +27,54 @@ def search_and_fetch(query: str, retmax: int = 5) -> list:
     search_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
     fetch_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
-    # 🔍 Step 1: Get PubMed IDs based on search query
+    # 🔍 Step 1: Get PubMed IDs
     search_params = {
         "db": "pubmed",
         "term": query,
         "retmode": "json",
-        "retmax": retmax
+        "retmax": retmax,
+        "email": NCBI_EMAIL
     }
 
-    search_response = requests.get(search_url, params=search_params)
-    search_response.raise_for_status()
-    idlist = search_response.json().get("esearchresult", {}).get("idlist", [])
-
-    if not idlist:
+    try:
+        search_response = requests.get(search_url, params=search_params, timeout=10)
+        search_response.raise_for_status()
+        idlist = search_response.json().get("esearchresult", {}).get("idlist", [])
+    except Exception as e:
+        console.print(f"[red]❌ Failed to search PubMed: {e}[/red]")
         return []
 
-    # 📥 Step 2: Fetch article details using EFetch
+    if not idlist:
+        console.print("[yellow]⚠️ No papers found for this query.[/yellow]")
+        return []
+
+    # 📥 Step 2: Fetch metadata
     fetch_params = {
         "db": "pubmed",
         "id": ",".join(idlist),
-        "retmode": "xml"
+        "retmode": "xml",
+        "email": NCBI_EMAIL
     }
 
-    fetch_response = requests.get(fetch_url, params=fetch_params)
-    fetch_response.raise_for_status()
-    return parse_pubmed_xml(fetch_response.text, idlist)
+    try:
+        fetch_response = requests.get(fetch_url, params=fetch_params, timeout=10)
+        fetch_response.raise_for_status()
+        return parse_pubmed_xml(fetch_response.text, idlist)
+    except Exception as e:
+        console.print(f"[red]❌ Failed to fetch article details: {e}[/red]")
+        return []
 
 
 def parse_pubmed_xml(xml_data: str, idlist: list) -> list:
     """
-    Parse XML and extract metadata including affiliations and emails.
+    Parse PubMed XML and extract article metadata.
 
     Args:
-        xml_data (str): Raw XML from PubMed EFetch.
-        idlist (list): List of PubMed IDs to match.
+        xml_data (str): Raw XML response from PubMed.
+        idlist (list): List of PubMed IDs for reference.
 
     Returns:
-        list: List of paper metadata dictionaries.
+        list: List of article metadata dictionaries.
     """
     root = ET.fromstring(xml_data)
     results = []
@@ -63,11 +84,11 @@ def parse_pubmed_xml(xml_data: str, idlist: list) -> list:
         title = article.findtext(".//ArticleTitle", default="No title available")
         abstract = article.findtext(".//AbstractText", default="No abstract available")
 
-        # 📅 Extract publication year
+        # 📅 Publication year
         pub_date = (
-            article.findtext(".//PubDate/Year") or
-            article.findtext(".//DateCompleted/Year") or
-            "Unknown"
+            article.findtext(".//PubDate/Year")
+            or article.findtext(".//DateCompleted/Year")
+            or "Unknown"
         )
 
         authors = []
@@ -83,18 +104,24 @@ def parse_pubmed_xml(xml_data: str, idlist: list) -> list:
             if aff:
                 affiliations.append(aff)
 
-        # 🧠 Extract structured fields from affiliations
+        # 🏢 Classify affiliations
         non_academic, companies, emails = classify_authors(affiliations)
 
-        results.append({
+        # 🧠 Optional: summarize abstract using LLM
+        # summary = summarize_abstract(abstract) if abstract else "No abstract available"
+
+        paper_data = {
             "PubmedID": pubmed_id,
             "Title": title,
             "Publication Date": pub_date,
             "Authors": ", ".join(authors) if authors else "Unknown",
             "Abstract": abstract,
+            # "summary": summary,  # Uncomment if needed
             "Non-academicAuthor(s)": "; ".join(non_academic),
             "CompanyAffiliation(s)": "; ".join(companies),
             "Corresponding Author Email": "; ".join(emails)
-        })
+        }
+
+        results.append(paper_data)
 
     return results
