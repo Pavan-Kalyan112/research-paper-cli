@@ -28,51 +28,6 @@ Retrieval-Augmented Generation for answering domain-specific questions over the 
 Filter papers by keywords in titles or abstracts.
 
 
-Research-Paper-Fetcher-CLI/
-│
-├── pyproject.toml              # Poetry config file (project metadata, dependencies)
-├── README.md                   # Project description for GitHub/TestPyPI
-├── LICENSE                     # License file (e.g., MIT)
-├── .gitignore                  # Git ignored files
-├── poetry.lock                 # Poetry lock file (auto-generated)
-│
-├── dist/                       # Generated distribution packages
-│   ├── pubmed_fetcher-0.1.2.tar.gz
-│   └── pubmed_fetcher-0.1.2-py3-none-any.whl
-│
-├── exports/                    # Generated output files (CSVs, PDFs, JSON)
-│   └── Result.csv
-│
-├── tests/                      # Unit tests for the package
-│   ├── test_cli.py
-│   ├── test_chat.py
-│   ├── test_config.py
-│   ├── test_data_pipeline.py
-│   ├── test_embedder.py
-│   ├── test_filters.py
-│   ├── test_llm.py
-│   ├── test_pubmed.py
-│   ├── test_rag.py
-│   ├── test_semantic_search.py
-│   ├── test_summary.py
-│   └── test_utils.py
-│
-└── src/                        # Source code root
-    └── pubmed_fetcher/         # Main Python package
-        ├── __init__.py
-        ├── cli.py              # Entry point for the command-line interface using argparse.
-        ├── chat.py             # Interactive chat functionality powered by LLMs.
-        ├── config.py           # Loads and manages configuration from .env or environment variables.
-        ├── data_pipeline.py    # Cleans, parses, and prepares data from PubMed for further processing.
-        ├── embedder.py         # Converts abstracts/summaries into embeddings using SentenceTransformer and manages FAISS indexing.
-        ├── filters.py          # Handles keyword-based filtering and company-affiliation extraction.
-        ├── llm.py              # Interfaces with an LLM (e.g., GPT) to generate paper summaries.
-        ├── pubmed.py           # PFetches research papers from the PubMed API.
-        ├── rag.py              # Implements a Retrieval-Augmented Generation assistant using indexed data.
-        ├── semantic_search.py  # Supports FAISS-based and brute-force semantic search over embeddings.
-        ├── summary.py          # Exports results to various formats (CSV, PDF, Markdown).
-        └── utils.py            # Helper utilities used across modules.
-
 
 
 ## 📦 Installation
